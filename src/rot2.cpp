@@ -236,7 +236,7 @@ std::vector<THR> ROT2::get_frame(BVH& bvh, int frame)
 		if(i==0){
 			double xyz[3] = {0, 0, 0};
 			for(int j=0;j<3;++j){
-				xyz[bvh.channels_.at(i+0)->type_ - BVH::ChannelEnum::X_POSITION] = data.at(i+j);
+				xyz[bvh.channels_.at(i+j)->type_ - BVH::ChannelEnum::X_POSITION] = data.at(i+j);
 			}
 			ret.push_back(THR(xyz[0], xyz[1], xyz[2]));
 		}else{
@@ -432,7 +432,7 @@ std::vector<ROT2*> ROT2::get_descendant()
 	return ret;
 }
 
-void ROT2::normalize_height()
+double ROT2::normalize_height()
 {
 	make_serialized_pointer();
 	double min_y = 9999;
@@ -446,6 +446,8 @@ void ROT2::normalize_height()
 		(*ite)->len_ /= size;
 		//printf("len[%s] = %f\n", (*ite)->name_, (*ite)->len_);
 	}
+	return 1/size;
+	
 }
 
 void _make_serialized_pointer(ROT2* r, std::vector<ROT2*>& p)
@@ -466,5 +468,29 @@ void ROT2::multiply_len(double a)
 	make_serialized_pointer();
 	for(auto ite = serialized_pointer_.begin();ite != serialized_pointer_.end();++ite){
 		(*ite)->len_ *= a;
+	}
+}
+
+double ROT2::except_y_rotation()
+{
+  THR origin(1, 0, 0);
+  THR dir_swing = THR(q_al_cl_.q()*origin.q()/q_al_cl_.q());
+  THR swing = THR(qua::get_quaternion_from_vector(dir_swing, origin));
+  double v1 = 0;
+  double v2 = 0;
+  double v3 = 0;
+  qua::q2e(swing.q(), v1, v2, v3, qua::RotSeq::xzy);
+  THR qy = THR(qua::e2q(0, 0, v3, qua::RotSeq::xzy));
+
+  THR q_except_y = q_al_cl_.q()/qy.q();
+	q_al_cl_ = q_except_y;
+	return v3;
+}
+
+void ROT2::multiply_pos(double a)
+{
+	make_serialized_pointer();
+	for(auto ite = serialized_pointer_.begin();ite != serialized_pointer_.end();++ite){
+		(*ite)->p_ = (*ite)->p_*a;
 	}
 }

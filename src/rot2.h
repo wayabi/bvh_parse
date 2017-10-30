@@ -36,6 +36,7 @@ public:
 
 private:
 	void set_q_ik_base();
+	void make_serialized_pointer();
 
 public:
 	THR p_;
@@ -54,10 +55,11 @@ public:
 	double weight_ik_;
 	boost::shared_ptr<PolReachConstraint> constraint_;
 	std::string name_constraint_;
-	void normalize_height();
-	void make_serialized_pointer();
+	double normalize_height();
 	std::vector<ROT2*> serialized_pointer_;
 	void multiply_len(double a);
+	void multiply_pos(double a);
+	double except_y_rotation();
 };
 #endif
 

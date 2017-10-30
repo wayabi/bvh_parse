@@ -57,11 +57,11 @@ THR CamPol::get_pos_on_screen(THR p)
 Q CamPol::get_q_camera()
 {
 	double a_axis_y = atan2(dir_cam_.x_, dir_cam_.z_);
-	double a_axis_x = atan2(dir_cam_.y_, sqrt(dir_cam_.x_*dir_cam_.x_+dir_cam_.z_*dir_cam_.z_));
-	//printf("a_axis(%f, %f, 0)\n", a_axis_x, a_axis_y);
-	Q q_axis_x = qua::e2q(-a_axis_x, 0, 0, qua::RotSeq::xyz);
+	double a_axis_horizontal = atan2(dir_cam_.y_, sqrt(dir_cam_.x_*dir_cam_.x_+dir_cam_.z_*dir_cam_.z_));
+	THR dir_horizontal = THR(0, 1, 0).cross(dir_cam_);
+	Q q_axis_horizontal = qua::get_quaternion_from_axis(dir_horizontal.x_, dir_horizontal.y_, dir_horizontal.z_, -a_axis_horizontal);
 	Q q_axis_y = qua::e2q(0, a_axis_y, 0, qua::RotSeq::xyz);
-	return q_axis_y;
+	return q_axis_horizontal*q_axis_y;
 }
 
 bool CamPol::check_see_obverse(const PolColor& p)
