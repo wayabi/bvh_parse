@@ -473,18 +473,27 @@ void ROT2::multiply_len(double a)
 
 double ROT2::except_y_rotation()
 {
+	/*
   THR origin(1, 0, 0);
   THR dir_swing = THR(q_al_cl_.q()*origin.q()/q_al_cl_.q());
   THR swing = THR(qua::get_quaternion_from_vector(dir_swing, origin));
   double v1 = 0;
   double v2 = 0;
   double v3 = 0;
-  qua::q2e(swing.q(), v1, v2, v3, qua::RotSeq::xzy);
-  THR qy = THR(qua::e2q(0, 0, v3, qua::RotSeq::xzy));
+  qua::q2e(swing.q(), v1, v2, v3, qua::RotSeq::yxz);
+  THR qy = THR(qua::e2q(v1, 0, 0, qua::RotSeq::yxz));
 
   THR q_except_y = q_al_cl_.q()/qy.q();
 	q_al_cl_ = q_except_y;
 	return v3;
+	*/
+	double v1 = 0;
+	double v2 = 0;
+	double v3 = 0;
+	qua::q2e(q_al_cl_.q(), v1, v2, v3, qua::RotSeq::yxz);
+	q_al_cl_ = qua::e2q(0, v2, v3, qua::RotSeq::yxz);
+	return v1;
+	
 }
 
 void ROT2::multiply_pos(double a)

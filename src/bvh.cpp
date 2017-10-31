@@ -466,7 +466,20 @@ void BVH::print(const std::vector<boost::math::quaternion<double> >& q)
 
 boost::math::quaternion<double> BVH::normalize_root_rotation()
 {
-	int index_root_rot = 3;//skip first position
+	int index_root_pos = 0;
+	int index_root_rot = 3;
+
+	//adhoc fiexd position order x -> y -> z
+	THR pos_init(
+		motion_.at(0).at(index_root_pos+0),
+		motion_.at(0).at(index_root_pos+1),
+		motion_.at(0).at(index_root_pos+2)
+	);
+	for(auto ite = motion_.begin();ite != motion_.end();++ite){
+		ite->at(index_root_pos+0) -= pos_init.x_;
+		ite->at(index_root_pos+1) -= pos_init.y_;
+		ite->at(index_root_pos+2) -= pos_init.z_;
+	}
 	qua::RotSeq rs = get_rot_seq(index_root_rot);
 	Q q = qua::e2q(
 		motion_.at(0).at(index_root_rot+0),
