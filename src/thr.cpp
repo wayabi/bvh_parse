@@ -197,3 +197,9 @@ THR THR::get_rand()
 	THR t = THR(x, y, z).normalize();
 	return t;
 }
+
+bool THR::nearly_equal(const THR& a) const
+{
+	double E = 0.00001;
+	return ((x_-a.x_)*(x_-a.x_)+(y_-a.y_)*(y_-a.y_)+(z_-a.z_)*(z_-a.z_)+(w_-a.w_)*(w_-a.w_) < E);
+}

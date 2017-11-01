@@ -17,6 +17,7 @@ public:
 	THR operator-(const THR& a) const;
 	THR operator*(double a) const;
 	bool operator==(const THR& a) const;
+	bool nearly_equal(const THR& a) const;
 	double get_size() const;
 	double get_size_sqr() const;
 	THR rotate(double theta, const char* axis);
