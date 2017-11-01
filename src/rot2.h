@@ -60,6 +60,8 @@ public:
 	void multiply_len(double a);
 	void multiply_pos(double a);
 	double except_y_rotation();
+
+	static void normalize_motion(std::vector<ROT2*>& rots);
 };
 #endif
 

@@ -503,3 +503,7 @@ void ROT2::multiply_pos(double a)
 		(*ite)->p_ = (*ite)->p_*a;
 	}
 }
+
+void ROT2::normalize_motion(std::vector<ROT2*>& rots)
+{
+}

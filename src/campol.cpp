@@ -259,13 +259,13 @@ void CamPol::simple_draw(ROT2* r, const char* path_img_out, THR pos, THR dir)
 	std::vector<PolColor> pc = cp.make_bone(r);
 	cp.adhoc_lighting(THR(-1, -1, 1), pc);
 	
-	double len_axis = 100;
+	double len_axis = 4;
 	pc.push_back(PolColor(POL(THR(0, 0, 0), THR(0, 0, 0), THR(len_axis, 0, 0)), 255, 0, 0));
 	pc.push_back(PolColor(POL(THR(0, 0, 0), THR(0, 0, 0), THR(0, len_axis, 0)), 0, 255, 0));
 	pc.push_back(PolColor(POL(THR(0, 0, 0), THR(0, 0, 0), THR(0, 0, len_axis)), 0, 0, 255));
 
 	int num_h_grid = 10;
-	double span_h_grid = 10.0;
+	double span_h_grid = 0.4;
 
 	for(int x=0;x<num_h_grid+1;++x){
 		THR p1((x-num_h_grid/2)*span_h_grid, 0, -num_h_grid/2*span_h_grid);
