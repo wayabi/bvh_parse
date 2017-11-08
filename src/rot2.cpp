@@ -45,11 +45,11 @@ void _update_pos(THR parent_aa_cw, THR parent_move_only_aa_cw, ROT2& r)
 {
 	r.q_parent_aa_cw_ = parent_aa_cw;
 	r.q_parent_move_only_aa_cw_ = parent_move_only_aa_cw.q();
-	THR al_cl = r.q_base_al_cl_.q();
+	THR al_cl = r.q_base_al_cl_;
 	THR al_cw(parent_aa_cw.q()*al_cl.q()/parent_aa_cw.q());
 	r.q_aa_cw_ = THR(al_cw.q()*parent_aa_cw.q());
 	
-	al_cl = r.q_al_cl_.q();
+	al_cl = r.q_al_cl_;
 	al_cw = THR(parent_move_only_aa_cw.q()*al_cl.q()/parent_move_only_aa_cw.q());
 	r.q_aa_cw_ = THR(al_cw.q()*r.q_aa_cw_.q());
 	parent_move_only_aa_cw = THR(al_cw.q()*parent_move_only_aa_cw.q());
@@ -240,6 +240,12 @@ std::vector<THR> ROT2::get_frame(BVH& bvh, int frame)
 			}
 			ret.push_back(THR(xyz[0], xyz[1], xyz[2]));
 		}else{
+			if(bvh.channels_.at(i*3+0)->type_ == BVH::ChannelEnum::X_POSITION ||
+				bvh.channels_.at(i*3+0)->type_ == BVH::ChannelEnum::Y_POSITION ||
+				bvh.channels_.at(i*3+0)->type_ == BVH::ChannelEnum::Z_POSITION){
+				//skip position
+				continue;
+			}
 			int index_rs1 = bvh.channels_.at(i*3+0)->type_ - BVH::ChannelEnum::X_ROTATION+1;
 			int index_rs2 = bvh.channels_.at(i*3+1)->type_ - BVH::ChannelEnum::X_ROTATION+1;
 			int index_rs3 = bvh.channels_.at(i*3+2)->type_ - BVH::ChannelEnum::X_ROTATION+1;
@@ -434,9 +440,10 @@ std::vector<ROT2*> ROT2::get_descendant()
 
 double ROT2::normalize_height()
 {
+	update_pos();
 	make_serialized_pointer();
-	double min_y = 9999;
-	double max_y = -9999;
+	double min_y = DBL_MAX;
+	double max_y = DBL_MIN;
 	for(auto ite = serialized_pointer_.begin();ite != serialized_pointer_.end();++ite){
 		if((*ite)->p_.y_ < min_y) min_y = (*ite)->p_.y_;
 		if((*ite)->p_.y_ > max_y) max_y = (*ite)->p_.y_;
@@ -506,4 +513,33 @@ void ROT2::multiply_pos(double a)
 
 void ROT2::normalize_motion(std::vector<ROT2*>& rots)
 {
+}
+
+std::vector<double> ROT2::get_minmax_pos()
+{
+	double x_min = DBL_MAX;
+	double x_max = DBL_MIN;
+	double y_min = DBL_MAX;
+	double y_max = DBL_MIN;
+	double z_min = DBL_MAX;
+	double z_max = DBL_MIN;
+
+	make_serialized_pointer();
+	for(auto ite = serialized_pointer_.begin();ite != serialized_pointer_.end();++ite){
+		THR p = (*ite)->p_;
+		if(p.x_ > x_max) x_max = p.x_;
+		if(p.x_ < x_min) x_min = p.x_;
+		if(p.y_ > y_max) y_max = p.y_;
+		if(p.y_ < y_min) y_min = p.y_;
+		if(p.z_ > z_max) z_max = p.z_;
+		if(p.z_ < z_min) z_min = p.z_;
+	}
+	vector<double> ret;
+	ret.push_back(x_min);
+	ret.push_back(x_max);
+	ret.push_back(y_min);
+	ret.push_back(y_max);
+	ret.push_back(z_min);
+	ret.push_back(z_max);
+	return ret;
 }

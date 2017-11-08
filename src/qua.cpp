@@ -11,7 +11,8 @@ typedef quaternion<double> Q;
 
 qua::RotSeq qua::get_rot_seq(int index1, int index2, int index3)
 {
-	switch(index1*100+index2*10+index3){
+	int case_ = index1*100+index2*10+index3;
+	switch(case_){
 	case 121:
 		return RotSeq::xyx;
 	case 123:
@@ -37,8 +38,10 @@ qua::RotSeq qua::get_rot_seq(int index1, int index2, int index3)
 	case 323:
 		return RotSeq::zyz;
 	default:
+		printf("qua::get_rot_seq() return RotSeq::none at case:%d\n", case_);
 		return RotSeq::none;
 	}
+	printf("qua::get_rot_seq() return RotSeq::none at case:%d\n", case_);
 	return RotSeq::none;
 }
 
