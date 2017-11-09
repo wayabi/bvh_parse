@@ -16,7 +16,8 @@ public:
 	void draw(std::vector<PolColor>& a, const char* name);
 	std::vector<PolColor> transform2camera_screen(std::vector<PolColor>& a);
 	std::vector<PolColor> make_bone(ROT2* r);
-	static void simple_draw(ROT2* r, const char* path_img_out, THR pos, THR dir);
+	std::vector<PolColor> make_bone(THR pos, THR q, double len);
+	static void simple_draw(ROT2* r, const char* path_img_out, THR pos, THR dir, std::vector<std::vector<PolColor> >* other_bone);
 
 public:
 	static void z_sort(std::vector<PolColor>& a);

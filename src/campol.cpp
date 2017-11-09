@@ -218,6 +218,20 @@ std::vector<PolColor> CamPol::make_bone(ROT2* r)
 	return ret;
 }
 
+std::vector<PolColor> CamPol::make_bone(THR pos, THR q, double len)
+{
+	vector<PolColor> ret;
+	if(len != 0.0){
+		for(auto ite = base_bone_.begin();ite != base_bone_.end();++ite){
+			THR p1 = THR(q.q()*ite->pol_.p1_.q()/q.q())*len + pos;
+			THR p2 = THR(q.q()*ite->pol_.p2_.q()/q.q())*len + pos;
+			THR p3 = THR(q.q()*ite->pol_.p3_.q()/q.q())*len + pos;
+			ret.push_back(PolColor(POL(p1, p2, p3), ite->r_, ite->g_, ite->b_));
+		}
+	}
+	return ret;
+}
+
 void CamPol::init_base_bone()
 {
 	int cr1 = 200; int cg1 = 0; int cb1 = 0;
@@ -246,7 +260,7 @@ void CamPol::init_base_bone()
 	base_bone_.push_back(PolColor(POL(a4, o2, a1), cr4, cg4, cb4));
 }
 
-void CamPol::simple_draw(ROT2* r, const char* path_img_out, THR pos, THR dir)
+void CamPol::simple_draw(ROT2* r, const char* path_img_out, THR pos, THR dir, std::vector<std::vector<PolColor> >* other_bone)
 {
 	CamPol cp;
 	cp.angle_x_ = 60*M_PI/180;
@@ -257,6 +271,13 @@ void CamPol::simple_draw(ROT2* r, const char* path_img_out, THR pos, THR dir)
 	cp.dir_cam_ = dir;
 
 	std::vector<PolColor> pc = cp.make_bone(r);
+	if(other_bone != NULL){
+		for(auto ite1 = other_bone->begin();ite1 != other_bone->end();++ite1){
+			for(auto ite2 = ite1->begin();ite2 != ite1->end();++ite2){
+				pc.push_back(*ite2);
+			}
+		}
+	}
 	cp.adhoc_lighting(THR(-1, -1, 1), pc);
 	
 	double len_axis = 4;
