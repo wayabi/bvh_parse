@@ -401,6 +401,9 @@ void qua::print(const Q& q)
 THR qua::get_rotation_axis(const Q& q)
 {
 	double theta = q.R_component_1();
+	if(theta >= 1 || theta <= -1){
+		return THR(0, 0, 0);
+	}
 	theta = convert_single_pi(acos(theta)*2);
 	THR ret;
 	double s = sin(theta/2);
