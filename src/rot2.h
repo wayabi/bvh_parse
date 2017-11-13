@@ -20,6 +20,7 @@ public:
 	ROT2* add();
 	void set_serialized_angle(std::vector<THR>& d);
 	std::vector<THR> get_serialized_angle();
+	std::vector<THR> get_serialized_angle_al_cw();
 	ROT2* copy(ROT2* parent);
 	ROT2* search(const char* name);
 	void set_global_vector(THR v, float weight);
@@ -33,14 +34,15 @@ public:
 	static std::vector<double> to_bvh_frame(std::vector<THR>& d);
 	ROT2::IK get_single_ik();
 	std::vector<ROT2*> get_descendant();
+	void make_serialized_pointer();
 
 private:
 	void set_q_ik_base();
-	void make_serialized_pointer();
 
 public:
 	THR p_;
 	THR q_al_cl_;
+	THR q_al_cw_;
 	THR q_base_al_cl_;
 	THR q_aa_cw_;
 	THR q_parent_aa_cw_;

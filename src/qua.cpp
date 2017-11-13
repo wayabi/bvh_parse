@@ -428,5 +428,8 @@ THR qua::q2em(const Q& q)
 Q qua::em2q(const THR& t)
 {
 	double half_theta = sqrt(t.x_*t.x_+t.y_*t.y_+t.z_*t.z_);
+	if(half_theta == 0.0){
+		return Q(1, 0, 0, 0);
+	}
 	return Q(cos(half_theta), t.x_/half_theta*sin(half_theta), t.y_/half_theta*sin(half_theta), t.z_/half_theta*sin(half_theta));
 }

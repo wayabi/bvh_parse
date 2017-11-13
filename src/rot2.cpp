@@ -13,6 +13,7 @@ ROT2::ROT2()
 {
 	p_ = THR(0, 0, 0);
 	q_al_cl_ = THR(1, 0, 0, 0);
+	q_al_cw_ = THR(1, 0, 0, 0);
 	q_base_al_cl_ = THR(1, 0, 0, 0);
 	q_aa_cw_ = THR(1, 0, 0, 0);
 	q_parent_aa_cw_ = THR(1, 0, 0, 0);
@@ -46,13 +47,13 @@ void _update_pos(THR parent_aa_cw, THR parent_move_only_aa_cw, ROT2& r)
 	r.q_parent_aa_cw_ = parent_aa_cw;
 	r.q_parent_move_only_aa_cw_ = parent_move_only_aa_cw.q();
 	THR al_cl = r.q_base_al_cl_;
-	THR al_cw(parent_aa_cw.q()*al_cl.q()/parent_aa_cw.q());
-	r.q_aa_cw_ = THR(al_cw.q()*parent_aa_cw.q());
+	THR al_cw_base = THR(parent_aa_cw.q()*al_cl.q()/parent_aa_cw.q());
+	r.q_aa_cw_ = THR(al_cw_base.q()*parent_aa_cw.q());
 	
 	al_cl = r.q_al_cl_;
-	al_cw = THR(parent_move_only_aa_cw.q()*al_cl.q()/parent_move_only_aa_cw.q());
-	r.q_aa_cw_ = THR(al_cw.q()*r.q_aa_cw_.q());
-	parent_move_only_aa_cw = THR(al_cw.q()*parent_move_only_aa_cw.q());
+	r.q_al_cw_ = THR(parent_move_only_aa_cw.q()*al_cl.q()/parent_move_only_aa_cw.q());
+	r.q_aa_cw_ = THR(r.q_al_cw_.q()*r.q_aa_cw_.q());
+	parent_move_only_aa_cw = THR(r.q_al_cw_.q()*parent_move_only_aa_cw.q());
 
 	THR v(r.q_aa_cw_.q()*THR(1, 0, 0).q()/r.q_aa_cw_.q());
 	for(auto ite = r.children_.begin();ite != r.children_.end();++ite){
@@ -201,11 +202,26 @@ std::vector<THR> ROT2::get_serialized_angle()
 	return ret;
 }
 
+std::vector<THR> ROT2::get_serialized_angle_al_cw()
+{
+	vector<THR> ret;
+	ret.push_back(p_);
+	make_serialized_pointer();
+	for(auto ite = serialized_pointer_.begin();ite != serialized_pointer_.end();++ite){
+		if((*ite)->name_.at((*ite)->name_.size()-1) == '_'){
+			continue;
+		}
+		ret.push_back((*ite)->q_al_cw_);
+	}
+	return ret;
+}
+
 ROT2* ROT2::copy(ROT2* parent)
 {
 	ROT2* ret = new ROT2();
 	ret->p_ = p_;
 	ret->q_al_cl_ = q_al_cl_;
+	ret->q_al_cw_ = q_al_cw_;
 	ret->q_base_al_cl_ = q_base_al_cl_;
 	ret->q_aa_cw_ = q_aa_cw_;
 	ret->q_parent_aa_cw_ = q_parent_aa_cw_;
