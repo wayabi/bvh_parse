@@ -52,8 +52,15 @@ void _update_pos(THR parent_aa_cw, THR parent_move_only_aa_cw, ROT2& r)
 	
 	al_cl = r.q_al_cl_;
 	r.q_al_cw_ = THR(parent_move_only_aa_cw.q()*al_cl.q()/parent_move_only_aa_cw.q());
+	r.q_al_cw2_ = r.q_al_cw_;//THR(parent_aa_cw.q()*r.q_al_cw_.q()/parent_aa_cw.q());
+	double x = 0;
+	double y = 0;
+	double z = 0;
+	qua::q2e(r.q_al_cw_.q(), y, x, z, qua::RotSeq::yxz);
+	//printf("muge[%s](%f, %f, %f)\n", r.name_.c_str(), 180*x/M_PI, 180*y/M_PI, 180*z/M_PI);
 	r.q_aa_cw_ = THR(r.q_al_cw_.q()*r.q_aa_cw_.q());
 	parent_move_only_aa_cw = THR(r.q_al_cw_.q()*parent_move_only_aa_cw.q());
+
 
 	THR v(r.q_aa_cw_.q()*THR(1, 0, 0).q()/r.q_aa_cw_.q());
 	for(auto ite = r.children_.begin();ite != r.children_.end();++ite){
@@ -71,8 +78,29 @@ void ROT2::update_pos()
 		return;
 	}
 	_update_pos(parent_aa_cw, parent_base_aa_cw, *this);
-}
 
+
+/////////////////////
+/*
+	make_serialized_pointer();
+	for(auto ite = serialized_pointer_.begin();ite != serialized_pointer_.end();++ite){
+		(*ite)->q_aa_cw_ = THR((*ite)->q_al_cw2_.q()*(*ite)->q_aa_cw_.q());
+	}
+	for(auto ite = serialized_pointer_.begin();ite != serialized_pointer_.end();++ite){
+		THR parent_aa_cw(1, 0, 0, 0);
+		THR parent_pos(0, 0, 0);
+		double len = 0;
+		if((*ite)->parent_){
+			parent_aa_cw = (*ite)->parent_->q_aa_cw_;
+			len = (*ite)->parent_->len_;
+			parent_pos = (*ite)->parent_->p_;
+		}
+		THR v(parent_aa_cw.q()*THR(1, 0, 0).q()/parent_aa_cw.q());
+		(*ite)->p_ = parent_pos+v*len;
+	}
+
+*/
+}
 ROT2* _make_bone(BVH::Joint* j, ROT2* r, THR parent_aa_cw)
 {
 	if(j == NULL) return NULL;
@@ -157,6 +185,10 @@ void _set_serialized_angle(ROT2* rot, std::vector<THR>::iterator& ite_data)
 {
 	if(rot->name_.at(rot->name_.size()-1) != '_'){
 		rot->q_al_cl_ = *ite_data;
+
+		//printf("_set %s\n", rot->name_.c_str());
+		//rot->q_al_cl_.print();
+
 		++ite_data;
 	}else{
 		rot->q_al_cl_ = THR(1, 0, 0, 0);
@@ -174,7 +206,7 @@ void ROT2::set_serialized_angle(std::vector<THR>& d)
 	_set_serialized_angle(this, ite);
 	THR root_angle = q_al_cl_;
 	q_al_cl_ = THR(1, 0, 0, 0);
-	_refer_parent_angle(this);
+	//_refer_parent_angle(this);
 	q_al_cl_ = root_angle;
 }
 
@@ -195,7 +227,7 @@ std::vector<THR> ROT2::get_serialized_angle()
 	ret.push_back(p_);
 	ROT2* r = copy(NULL);
 	THR root_angle = r->q_al_cl_;
-	_refer_child_angle(r);
+	//_refer_child_angle(r);
 	r->q_al_cl_ = root_angle;
 	_get_serialized_angle(r, ret);
 	delete(r);
@@ -211,7 +243,8 @@ std::vector<THR> ROT2::get_serialized_angle_al_cw()
 		if((*ite)->name_.at((*ite)->name_.size()-1) == '_'){
 			continue;
 		}
-		ret.push_back((*ite)->q_al_cw_);
+		//printf("name:%s\n", (*ite)->name_.c_str());
+		ret.push_back((*ite)->q_al_cw2_);
 	}
 	return ret;
 }

@@ -43,6 +43,7 @@ public:
 	THR p_;
 	THR q_al_cl_;
 	THR q_al_cw_;
+	THR q_al_cw2_;
 	THR q_base_al_cl_;
 	THR q_aa_cw_;
 	THR q_parent_aa_cw_;
