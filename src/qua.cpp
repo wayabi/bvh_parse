@@ -434,6 +434,9 @@ THR qua::q2em(const Q& q)
 	double theta = acos(w);
 	THR ret;
 	double s = sin(theta);
+	if(s == 0.0){
+		return THR(0, 0, 0);
+	}
 	ret.x_ = q.R_component_2()*theta/s;
 	ret.y_ = q.R_component_3()*theta/s;
 	ret.z_ = q.R_component_4()*theta/s;
