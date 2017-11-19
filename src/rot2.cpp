@@ -52,7 +52,6 @@ void _update_pos(THR parent_aa_cw, THR parent_move_only_aa_cw, ROT2& r)
 	
 	al_cl = r.q_al_cl_;
 	r.q_al_cw_ = THR(parent_move_only_aa_cw.q()*al_cl.q()/parent_move_only_aa_cw.q());
-	r.q_al_cw2_ = r.q_al_cw_;//THR(parent_aa_cw.q()*r.q_al_cw_.q()/parent_aa_cw.q());
 	double x = 0;
 	double y = 0;
 	double z = 0;
@@ -157,10 +156,10 @@ ROT2* ROT2::make_bone(BVH* bvh)
 	return ret;
 }
 
-void _refer_parent_angle(ROT2* r)
+void ROT2::refer_parent_angle(ROT2* r)
 {
 	for(auto ite = r->children_.begin();ite != r->children_.end();++ite){
-		_refer_parent_angle(*ite);
+		ROT2::refer_parent_angle(*ite);
 	}
 	if(r->parent_){
 		r->q_al_cl_ = r->parent_->q_al_cl_;
@@ -244,7 +243,7 @@ std::vector<THR> ROT2::get_serialized_angle_al_cw()
 			continue;
 		}
 		//printf("name:%s\n", (*ite)->name_.c_str());
-		ret.push_back((*ite)->q_al_cw2_);
+		ret.push_back((*ite)->q_al_cw_);
 	}
 	return ret;
 }
@@ -527,29 +526,27 @@ void ROT2::multiply_len(double a)
 	}
 }
 
-double ROT2::except_y_rotation()
+double ROT2::except_y_rotation(boost::math::quaternion<double> q_spain)
 {
-	/*
   THR origin(1, 0, 0);
-  THR dir_swing = THR(q_al_cl_.q()*origin.q()/q_al_cl_.q());
-  THR swing = THR(qua::get_quaternion_from_vector(dir_swing, origin));
-  double v1 = 0;
-  double v2 = 0;
-  double v3 = 0;
-  qua::q2e(swing.q(), v1, v2, v3, qua::RotSeq::yxz);
-  THR qy = THR(qua::e2q(v1, 0, 0, qua::RotSeq::yxz));
+	origin = THR(q_spain*origin.q()/q_spain);
+	origin.print("origin");
+  //THR origin(0, 1, 0);
 
-  THR q_except_y = q_al_cl_.q()/qy.q();
-	q_al_cl_ = q_except_y;
-	return v3;
-	*/
+  THR dir_swing = THR(q_al_cl_.q()*origin.q()/q_al_cl_.q());
+	//dir_swing.print("swing");
+	double theta_y = atan2(dir_swing.x_, dir_swing.z_);
+	Q q_inverse_y = qua::e2q(-theta_y, 0, 0, qua::RotSeq::yxz);
+	q_al_cl_ = THR(q_inverse_y*q_al_cl_.q());
+	return theta_y;
+/*
 	double v1 = 0;
 	double v2 = 0;
 	double v3 = 0;
 	qua::q2e(q_al_cl_.q(), v1, v2, v3, qua::RotSeq::yxz);
 	q_al_cl_ = qua::e2q(0, v2, v3, qua::RotSeq::yxz);
 	return v1;
-	
+*/
 }
 
 void ROT2::multiply_pos(double a)

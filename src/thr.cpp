@@ -80,6 +80,16 @@ THR THR::operator*(double a) const
 	return ret;
 }
 
+THR THR::operator/(double a) const
+{
+	THR ret;
+	ret.x_ = x_/a;
+	ret.y_ = y_/a;
+	ret.z_ = z_/a;
+	ret.w_ = w_/a;
+	return ret;
+}
+
 THR THR::rotate(double theta, const char* axis)
 {
 	double x = x_;

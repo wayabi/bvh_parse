@@ -400,11 +400,12 @@ void qua::print(const Q& q)
 
 THR qua::get_rotation_axis(const Q& q)
 {
-	double theta = q.R_component_1();
-	if(theta >= 1 || theta <= -1){
+	double w = q.R_component_1();
+	if(w > 1 || w < -1){
 		return THR(0, 0, 0);
 	}
-	theta = convert_single_pi(acos(theta)*2);
+	
+	double theta = convert_single_pi(acos(w)*2);
 	THR ret;
 	double s = sin(theta/2);
 	ret.x_ = q.R_component_2()/s;
@@ -417,12 +418,27 @@ THR qua::get_rotation_axis(const Q& q)
 
 THR qua::q2em(const Q& q)
 {
+/*
 	THR t = qua::get_rotation_axis(q);
 	t.x_ = t.x_*t.w_/2;
 	t.y_ = t.y_*t.w_/2;
 	t.z_ = t.z_*t.w_/2;
 	t.w_ = 0.0;
 	return t;
+*/
+	double w = q.R_component_1();
+	if(w > 1 || w < -1){
+		return THR(0, 0, 0);
+	}
+	
+	double theta = acos(w);
+	THR ret;
+	double s = sin(theta);
+	ret.x_ = q.R_component_2()*theta/s;
+	ret.y_ = q.R_component_3()*theta/s;
+	ret.z_ = q.R_component_4()*theta/s;
+	ret.w_ = 0;
+	return ret;
 }
 
 Q qua::em2q(const THR& t)

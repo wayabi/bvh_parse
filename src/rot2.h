@@ -35,7 +35,7 @@ public:
 	ROT2::IK get_single_ik();
 	std::vector<ROT2*> get_descendant();
 	void make_serialized_pointer();
-
+	static void refer_parent_angle(ROT2* r);
 private:
 	void set_q_ik_base();
 
@@ -43,7 +43,6 @@ public:
 	THR p_;
 	THR q_al_cl_;
 	THR q_al_cw_;
-	THR q_al_cw2_;
 	THR q_base_al_cl_;
 	THR q_aa_cw_;
 	THR q_parent_aa_cw_;
@@ -62,7 +61,7 @@ public:
 	std::vector<ROT2*> serialized_pointer_;
 	void multiply_len(double a);
 	void multiply_pos(double a);
-	double except_y_rotation();
+	double except_y_rotation(boost::math::quaternion<double> q_spain);
 	std::vector<double> get_minmax_pos();
 
 	static void normalize_motion(std::vector<ROT2*>& rots);
