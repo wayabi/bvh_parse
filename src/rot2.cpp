@@ -526,16 +526,48 @@ void ROT2::multiply_len(double a)
 	}
 }
 
-double ROT2::except_y_rotation(boost::math::quaternion<double> q_spain)
+double ROT2::except_y_rotation(boost::math::quaternion<double> q_spain, double last_y_rot)
 {
+/*
   THR origin(1, 0, 0);
 	origin = THR(q_spain*origin.q()/q_spain);
-	origin.print("origin");
-  //THR origin(0, 1, 0);
 
   THR dir_swing = THR(q_al_cl_.q()*origin.q()/q_al_cl_.q());
-	//dir_swing.print("swing");
+	
 	double theta_y = atan2(dir_swing.x_, dir_swing.z_);
+	Q q_inverse_y = qua::e2q(-theta_y, 0, 0, qua::RotSeq::yxz);
+	q_al_cl_ = THR(q_inverse_y*q_al_cl_.q());
+	return theta_y;
+*/
+/*
+  THR dir_up = THR(q_al_cl_.q()*THR(0, 1, 0).q()/q_al_cl_.q());
+	THR dir_forward = THR(q_al_cl_.q()*THR(0, 0, 1).q()/q_al_cl_.q());
+	
+	
+	double theta_y_forward = atan2(dir_forward.x_, dir_forward.z_);
+	double theta_y_up = atan2(dir_up.x_, dir_up.z_);
+	double theta_y = theta_y_forward;
+	if(fabs(qua::convert_single_pi(theta_y_forward-last_y_rot)) >
+		fabs(qua::convert_single_pi(theta_y_up-last_y_rot))){
+		theta_y = theta_y_up;
+	}
+			
+	Q q_inverse_y = qua::e2q(-theta_y, 0, 0, qua::RotSeq::yxz);
+	q_al_cl_ = THR(q_inverse_y*q_al_cl_.q());
+	return theta_y;
+*/
+  THR dir_up = THR(q_al_cl_.q()*THR(0, 1, 0).q()/q_al_cl_.q());
+	THR dir_forward = THR(q_al_cl_.q()*THR(0, 0, 1).q()/q_al_cl_.q());
+	
+	
+	double theta_y_forward = atan2(dir_forward.x_, dir_forward.z_);
+	double theta_y_up = atan2(dir_up.x_, dir_up.z_);
+	double theta_y = theta_y_forward;
+	if(fabs(qua::convert_single_pi(theta_y_forward-last_y_rot)) >
+		fabs(qua::convert_single_pi(theta_y_up-last_y_rot))){
+		theta_y = theta_y_up;
+	}
+			
 	Q q_inverse_y = qua::e2q(-theta_y, 0, 0, qua::RotSeq::yxz);
 	q_al_cl_ = THR(q_inverse_y*q_al_cl_.q());
 	return theta_y;
@@ -544,8 +576,19 @@ double ROT2::except_y_rotation(boost::math::quaternion<double> q_spain)
 	double v2 = 0;
 	double v3 = 0;
 	qua::q2e(q_al_cl_.q(), v1, v2, v3, qua::RotSeq::yxz);
-	q_al_cl_ = qua::e2q(0, v2, v3, qua::RotSeq::yxz);
+	Q q0 = qua::e2q(0, v2, v3, qua::RotSeq::yxz;
+	Q q1 = qua::e2q(-v1, 0, 0, qua::RotSeq::yxz);
+	Q q2 = q0*q1/q0;
+	q_al_cl_ = THR(q2*q_al_cl_.q());
 	return v1;
+*/
+/*
+	double v1 = 0;
+	double v2 = 0;
+	double v3 = 0;
+	qua::q2e(q_al_cl_.q(), v1, v2, v3, qua::RotSeq::zxy);
+	q_al_cl_ = qua::e2q(v1, v2, 0, qua::RotSeq::zxy);
+	return v3;
 */
 }
 

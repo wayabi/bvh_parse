@@ -61,7 +61,7 @@ public:
 	std::vector<ROT2*> serialized_pointer_;
 	void multiply_len(double a);
 	void multiply_pos(double a);
-	double except_y_rotation(boost::math::quaternion<double> q_spain);
+	double except_y_rotation(boost::math::quaternion<double> q_spain, double last_y_rot=0);
 	std::vector<double> get_minmax_pos();
 
 	static void normalize_motion(std::vector<ROT2*>& rots);
