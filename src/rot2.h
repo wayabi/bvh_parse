@@ -6,6 +6,7 @@
 #include "pol_reach_constraint.h"
 #include <vector>
 #include <string>
+#include <utility>
 #include <boost/tuple/tuple.hpp>
 #include <boost/math/quaternion.hpp>
 
@@ -21,6 +22,7 @@ public:
 	void set_serialized_angle(std::vector<THR>& d);
 	std::vector<THR> get_serialized_angle();
 	std::vector<THR> get_serialized_angle_al_cw();
+	std::vector<THR> get_serialized_pos();
 	ROT2* copy(ROT2* parent);
 	ROT2* search(const char* name);
 	void set_global_vector(THR v, float weight);
@@ -61,7 +63,7 @@ public:
 	std::vector<ROT2*> serialized_pointer_;
 	void multiply_len(double a);
 	void multiply_pos(double a);
-	double except_y_rotation(boost::math::quaternion<double> q_spain, double last_y_rot=0);
+	std::pair<double, THR> except_y_rotation(double last_y_rot=0);
 	std::vector<double> get_minmax_pos();
 
 	static void normalize_motion(std::vector<ROT2*>& rots);

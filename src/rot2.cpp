@@ -248,6 +248,26 @@ std::vector<THR> ROT2::get_serialized_angle_al_cw()
 	return ret;
 }
 
+void _get_serialized_pos(ROT2* rot, std::vector<THR>& d){
+	if(rot->name_.at(rot->name_.size()-1) != '_'){
+  	d.push_back(rot->p_);
+	}else{
+		return;
+	}
+  for(auto ite = rot->children_.begin();ite != rot->children_.end();++ite){
+    _get_serialized_angle(*ite, d);
+  }
+}
+
+std::vector<THR> ROT2::get_serialized_pos()
+{
+	std::vector<THR> ret;
+	ROT2* r = copy(NULL);
+	_get_serialized_pos(r, ret);
+	delete(r);
+	return ret;
+}
+
 ROT2* ROT2::copy(ROT2* parent)
 {
 	ROT2* ret = new ROT2();
@@ -526,7 +546,7 @@ void ROT2::multiply_len(double a)
 	}
 }
 
-double ROT2::except_y_rotation(boost::math::quaternion<double> q_spain, double last_y_rot)
+std::pair<double, THR> ROT2::except_y_rotation(double last_y_rot)
 {
 /*
   THR origin(1, 0, 0);
@@ -569,8 +589,8 @@ double ROT2::except_y_rotation(boost::math::quaternion<double> q_spain, double l
 	}
 			
 	Q q_inverse_y = qua::e2q(-theta_y, 0, 0, qua::RotSeq::yxz);
-	q_al_cl_ = THR(q_inverse_y*q_al_cl_.q());
-	return theta_y;
+	//q_al_cl_ = THR(q_inverse_y*q_al_cl_.q());
+	return std::make_pair(theta_y, THR(q_inverse_y*q_al_cl_.q()));
 /*
 	double v1 = 0;
 	double v2 = 0;
